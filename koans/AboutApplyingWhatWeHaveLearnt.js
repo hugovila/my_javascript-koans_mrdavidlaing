@@ -1,90 +1,279 @@
-var _; //globals
+/*jslint nomen: true */
+/*global _, describe, beforeEach, it, expect*/
+/*jslint nomen: false */
 
-describe("About Applying What We Have Learnt", function() {
+describe("About Applying What We Have Learnt", function () {
+    "use strict";
+    var products;
 
-  var products;
-
-  beforeEach(function () {
-    products = [
-       { name: "Sonoma", ingredients: ["artichoke", "sundried tomatoes", "mushrooms"], containsNuts: false },
-       { name: "Pizza Primavera", ingredients: ["roma", "sundried tomatoes", "goats cheese", "rosemary"], containsNuts: false },
-       { name: "South Of The Border", ingredients: ["black beans", "jalapenos", "mushrooms"], containsNuts: false },
-       { name: "Blue Moon", ingredients: ["blue cheese", "garlic", "walnuts"], containsNuts: true },
-       { name: "Taste Of Athens", ingredients: ["spinach", "kalamata olives", "sesame seeds"], containsNuts: true }
-    ];
-  });
+    beforeEach(function () {
+        products = [
+            { name: "Sonoma", ingredients: ["artichoke", "sundried tomatoes", "mushrooms"], containsNuts: false },
+            { name: "Pizza Primavera", ingredients: ["roma", "sundried tomatoes", "goats cheese", "rosemary"], containsNuts: false },
+            { name: "South Of The Border", ingredients: ["black beans", "mushrooms", "jalapenos"], containsNuts: false },
+            { name: "Blue Moon", ingredients: ["blue cheese", "garlic", "walnuts"], containsNuts: true },
+            { name: "Taste Of Athens", ingredients: ["spinach", "kalamata olives", "sesame seeds"], containsNuts: true }
+        ];
+    });
 
   /*********************************************************************************/
 
-  it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (imperative)", function () {
+    it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (imperative)", function () {
 
-    var i,j,hasMushrooms, productsICanEat = [];
+        var i,
+            j,
+            hasMushrooms,
+            productsICanEat = [];
 
-    for (i = 0; i < products.length; i+=1) {
-        if (products[i].containsNuts === false) {
-            hasMushrooms = false;
-            for (j = 0; j < products[i].ingredients.length; j+=1) {
-               if (products[i].ingredients[j] === "mushrooms") {
-                  hasMushrooms = true;
-               }
+        for (i = 0; i < products.length; i += 1) {
+            if (products[i].containsNuts === false) {
+                hasMushrooms = false;
+                for (j = 0; j < products[i].ingredients.length; j += 1) {
+                    if (products[i].ingredients[j] === "mushrooms") {
+                        hasMushrooms = true;
+                    }
+                }
+                if (!hasMushrooms) { productsICanEat.push(products[i]); }
             }
-            if (!hasMushrooms) productsICanEat.push(products[i]);
         }
-    }
-
-    expect(productsICanEat.length).toBe(FILL_ME_IN);
-  });
-
-  it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (functional)", function () {
-
-      var productsICanEat = [];
-
-      /* solve using filter() & all() / any() */
-
-      expect(productsICanEat.length).toBe(FILL_ME_IN);
-  });
+        expect(productsICanEat.length).toBe(1);
+    });
 
   /*********************************************************************************/
 
-  it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (imperative)", function () {
+    it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (imperative refactor)", function () {
 
-    var sum = 0;
-    for(var i=1; i<1000; i+=1) {
-      if (i % 3 === 0 || i % 5 === 0) {
-        sum += i;
-      }
-    }
+        var i,
+            j,
+            pizzasICanEat = [],
+            pizzas = products,
+            noContainsNuts,
+            hasMushroom,
+            noHasMushrooms,
+            iCanEat;
 
-    expect(sum).toBe(FILL_ME_IN);
-  });
+        noContainsNuts = function (pizza) {
+            return (!pizza.containsNuts);
+        };
 
-  it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (functional)", function () {
+        hasMushroom = function (ingredient) {
+            if (ingredient === "mushrooms") { return true; }
+        };
 
-    var sum = FILL_ME_IN;    /* try chaining range() and reduce() */
+        noHasMushrooms = function (pizzaHasMushroom) {
+            if (pizzaHasMushroom) { return true; }
+            return false;
+        };
 
-    expect(233168).toBe(FILL_ME_IN);
-  });
+        iCanEat = function (pizzas) {
+            var pizza,
+                pizzaHasMushroom,
+                ingredients,
+                ingredient;
 
-  /*********************************************************************************/
-   it("should count the ingredient occurrence (imperative)", function () {
-    var ingredientCount = { "{ingredient name}": 0 };
+            for (i = 0; i < pizzas.length; i += 1) {
+                pizza = pizzas[i];
+                ingredients = pizza.ingredients;
 
-    for (i = 0; i < products.length; i+=1) {
-        for (j = 0; j < products[i].ingredients.length; j+=1) {
-            ingredientCount[products[i].ingredients[j]] = (ingredientCount[products[i].ingredients[j]] || 0) + 1;
+                for (j = 0; j < ingredients.length; j += 1) {
+                    ingredient = pizza.ingredients[j];
+                    pizzaHasMushroom = hasMushroom(ingredient);
+                }
+
+                if (noHasMushrooms(pizzaHasMushroom) && noContainsNuts(pizza)) { pizzasICanEat.push(pizzas[i]); }
+            }
+            return pizzasICanEat;
+        };
+
+        pizzasICanEat = iCanEat(pizzas);
+
+        expect(pizzasICanEat.length).toBe(1);
+    });
+
+    /*********************************************************************************/
+
+    it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (¿imperative?)", function () {
+
+        // for each pizza take ingredients
+        // if some ingredient is nuts next pizza
+        // is some ingredient is mushrooms next pizza
+        // save pizza for eat
+
+        var iCanEat,
+            hasIngredientsICantEat,
+            hasIngredientICantEat,
+            hasNuts,
+            productsICanEat = [],
+            ingredientICantEat = "mushrooms";
+
+        iCanEat = function (products, ingredientICantEat) {
+            productsICanEat = [];
+            products.forEach(function (product) {
+                var noContainsIngredientsICantEat = false,
+                    noContainsNuts = hasNuts(product);
+
+                noContainsIngredientsICantEat = hasIngredientsICantEat(product.ingredients, ingredientICantEat);
+                if (noContainsIngredientsICantEat && noContainsNuts) { productsICanEat.push(product); }
+            });
+            return productsICanEat;
+        };
+
+        hasIngredientsICantEat = function (ingredients, ingredientICantEat) {
+            var hasSomeIngredientsICantEatt = false;
+
+            ingredients.forEach(function (ingredient) {
+                if (!hasSomeIngredientsICantEatt) { hasSomeIngredientsICantEatt = hasIngredientICantEat(ingredient, ingredientICantEat); }
+            });
+            return !hasSomeIngredientsICantEatt;
+        };
+
+        hasIngredientICantEat =  function (ingredient, ingredientICantEat) {
+            return ingredient === ingredientICantEat;
+        };
+
+        hasNuts = function (product) {
+            return !product.containsNuts;
+        };
+
+        expect(iCanEat(products, ingredientICantEat).length).toBe(1);
+    });
+
+    /*********************************************************************************/
+
+    it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (functional) filter() & every() Javascript", function () {
+
+        var productsICanEat = [];
+
+        /* solve using filter() & all() / any() Underscore*/
+        /* Solve using filter() & every() Javascript */
+
+        function ingredientICantEat(ingredient) {
+            if (ingredient !== "mushrooms") { return true; }
+            return false;
         }
-    }
 
-    expect(ingredientCount['mushrooms']).toBe(FILL_ME_IN);
-  });
+        function ingredientsICantEat(product) {
+            return product.ingredients.every(ingredientICantEat);
+        }
 
-  it("should count the ingredient occurrence (functional)", function () {
-    var ingredientCount = { "{ingredient name}": 0 };
+        function productsICantEat(product) {
+            if (!product.containsNuts && ingredientsICantEat(product)) { return true; }
+            return false;
+        }
 
-    /* chain() together map(), flatten() and reduce() */
+        productsICanEat = products.filter(productsICantEat);
 
-    expect(ingredientCount['mushrooms']).toBe(FILL_ME_IN);
-  });
+        expect(productsICanEat.length).toBe(1);
+    });
+
+    /*********************************************************************************/
+
+    it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (functional) filter() & some() Javascript", function () {
+
+        var productsICanEat = [];
+
+        /* solve using filter() & all() / any() Underscore*/
+        /* Solve using filter() & some() Javascript */
+
+        function ingredientICantEat(ingredient) {
+            return (ingredient === "mushrooms");
+        }
+
+        function ingredientsICantEat(product) {
+            return !product.ingredients.some(ingredientICantEat);
+        }
+
+        function productsICantEat(product) {
+            return (!product.containsNuts && ingredientsICantEat(product));
+        }
+
+        productsICanEat = products.filter(productsICantEat);
+
+        expect(productsICanEat.length).toBe(1);
+    });
+
+    /*********************************************************************************/
+
+    it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (imperative)", function () {
+
+        var sum = 0,
+            i;
+
+        for (i = 1; i < 1000; i += 1) {
+            if (i % 3 === 0 || i % 5 === 0) {
+                sum += i;
+            }
+        }
+
+        expect(sum).toBe(233168);
+    });
+
+    it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (imperative) refactor", function () {
+
+        var sum = 0,
+            i;
+        for (i = 1; i < 1000; i += 1) {
+            if (i % 3 === 0 || i % 5 === 0) {
+                sum += i;
+            }
+        }
+
+        expect(sum).toBe(233168);
+    });
+
+    it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (functional)", function () {
+
+        /* try chaining range() and reduce() */
+        /*jslint nomen: true */
+        var sum = _.range(1, 1000, 1).
+                    reduce(function (memo, num) { if (num % 3 === 0 || num % 5 === 0) { return memo + num; } return memo; }, 0);
+        /*jslint nomen: false */
+        expect(233168).toBe(sum);
+    });
+
+    /*********************************************************************************/
+
+    it("should count the ingredient occurrence (imperative)", function () {
+        var ingredientCount = { "{ingredient name}": 0 },
+            i,
+            j;
+
+        for (i = 0; i < products.length; i += 1) {
+            for (j = 0; j < products[i].ingredients.length; j += 1) {
+                ingredientCount[products[i].ingredients[j]] = (ingredientCount[products[i].ingredients[j]] || 0) + 1;
+            }
+        }
+
+        expect(ingredientCount.mushrooms).toBe(2);
+    });
+
+    it("should count the ingredient occurrence (imperative) refactor", function () {
+        var ingredientCount = { "{ingredient name}": 0 },
+            i,
+            j;
+
+        for (i = 0; i < products.length; i += 1) {
+            for (j = 0; j < products[i].ingredients.length; j += 1) {
+                ingredientCount[products[i].ingredients[j]] = (ingredientCount[products[i].ingredients[j]] || 0) + 1;
+            }
+        }
+
+        expect(ingredientCount.mushrooms).toBe(2);
+    });
+
+    it("should count the ingredient occurrence (functional)", function () {
+        var ingredientCount = { "{ingredient name}": 0 };
+
+        /* chain() together map(), flatten() and reduce() */
+        /*jslint nomen: true */
+        ingredientCount = _(products).chain().
+                            map(function (product) { return product.ingredients; }).
+                            flatten().
+                            reduce(function (ingredients, index) { ingredients[index] = (ingredients[index] || 0) + 1; return ingredients; }, {}).
+                            value();
+        /*jslint nomen: false */
+        expect(ingredientCount['sundried tomatoes']).toBe(2);
+    });
 
   /*********************************************************************************/
   /* UNCOMMENT FOR EXTRA CREDIT */
