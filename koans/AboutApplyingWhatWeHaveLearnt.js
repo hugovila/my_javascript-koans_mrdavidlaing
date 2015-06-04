@@ -119,12 +119,14 @@ describe("About Applying What We Have Learnt", function () {
         };
 
         hasIngredientsICantEat = function (ingredients, ingredientICantEat) {
-            var hasSomeIngredientsICantEatt = false;
+            var hasSomeIngredientsICantEat = false;
 
             ingredients.forEach(function (ingredient) {
-                if (!hasSomeIngredientsICantEatt) { hasSomeIngredientsICantEatt = hasIngredientICantEat(ingredient, ingredientICantEat); }
+                if (!hasSomeIngredientsICantEat) {
+                    hasSomeIngredientsICantEat = hasIngredientICantEat(ingredient, ingredientICantEat);
+                }
             });
-            return !hasSomeIngredientsICantEatt;
+            return !hasSomeIngredientsICantEat;
         };
 
         hasIngredientICantEat =  function (ingredient, ingredientICantEat) {
@@ -212,6 +214,7 @@ describe("About Applying What We Have Learnt", function () {
 
         var sum = 0,
             i;
+
         for (i = 1; i < 1000; i += 1) {
             if (i % 3 === 0 || i % 5 === 0) {
                 sum += i;
@@ -226,7 +229,12 @@ describe("About Applying What We Have Learnt", function () {
         /* try chaining range() and reduce() */
         /*jslint nomen: true */
         var sum = _.range(1, 1000, 1).
-                    reduce(function (memo, num) { if (num % 3 === 0 || num % 5 === 0) { return memo + num; } return memo; }, 0);
+                    reduce(function (memo, num) {
+                    if (num % 3 === 0 || num % 5 === 0) {
+                        return memo + num;
+                    }
+                    return memo;
+                }, 0);
         /*jslint nomen: false */
         expect(233168).toBe(sum);
     });
@@ -251,12 +259,32 @@ describe("About Applying What We Have Learnt", function () {
         var ingredientCount = { "{ingredient name}": 0 },
             i,
             j;
+            /*
+            Take each product.
+            For each product take ingredients.
+            For each ingredient inventarize it.
+            */
+        function inventorizeIngredient(ingredient) {
+            ingredientCount[ingredient] = (ingredientCount[ingredient] || 0) + 1;
+        }
 
-        for (i = 0; i < products.length; i += 1) {
-            for (j = 0; j < products[i].ingredients.length; j += 1) {
-                ingredientCount[products[i].ingredients[j]] = (ingredientCount[products[i].ingredients[j]] || 0) + 1;
+        function takeEachIngredient(product) {
+            for (j = 0; j < product.ingredients.length; j += 1) {
+                inventorizeIngredient(product.ingredients[j]);
             }
         }
+
+        function takeEachProduct(products) {
+            for (i = 0; i < products.length; i += 1) {
+                takeEachIngredient(products[i]);
+            }
+        }
+
+        function countIngredients(products) {
+            takeEachProduct(products);
+        }
+
+        countIngredients(products);
 
         expect(ingredientCount.mushrooms).toBe(2);
     });
