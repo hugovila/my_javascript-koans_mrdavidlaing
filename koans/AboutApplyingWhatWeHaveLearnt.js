@@ -214,12 +214,66 @@ describe("About Applying What We Have Learnt", function () {
 
         var sum = 0,
             i;
+        /*
+        Take each number between 1 to 1000.
+        For each number look if multiple of 3 or 5.
+        If multiple, sum it to a accumulator.
+        */
+        function sumIt(number) {
+            sum += number;
+        }
 
-        for (i = 1; i < 1000; i += 1) {
-            if (i % 3 === 0 || i % 5 === 0) {
-                sum += i;
+        function lookForMultiple(number) {
+            if (number % 3 === 0 || number % 5 === 0) { sumIt(number); }
+        }
+
+        function takeEachNumber() {
+            for (i = 1; i < 1000; i += 1) {
+                lookForMultiple(i);
             }
         }
+
+        function sumMultiple() {
+            takeEachNumber();
+        }
+
+        sumMultiple();
+
+        expect(sum).toBe(233168);
+    });
+
+    it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (imperative) module pattern", function () {
+
+        var myKoans = (function () {
+            var sum = 0,
+                i;
+            /*
+            Take each number between 1 to 1000.
+            For each number look if multiple of 3 or 5.
+            If multiple, sum it to a accumulator.
+            */
+            function sumIt(number) {
+                sum += number;
+            }
+
+            function lookForMultiple(number) {
+                if (number % 3 === 0 || number % 5 === 0) { return sumIt(number); }
+            }
+
+            function takeEachNumber() {
+                for (i = 1; i < 1000; i += 1) {
+                    lookForMultiple(i);
+                }
+            }
+            return {
+                sumMultiple: function () {
+                    takeEachNumber();
+                    return sum;
+                }
+            };
+        }()),
+
+            sum = myKoans.sumMultiple();
 
         expect(sum).toBe(233168);
     });
@@ -259,11 +313,11 @@ describe("About Applying What We Have Learnt", function () {
         var ingredientCount = { "{ingredient name}": 0 },
             i,
             j;
-            /*
-            Take each product.
-            For each product take ingredients.
-            For each ingredient inventarize it.
-            */
+        /*
+        Take each product.
+        For each product take ingredients.
+        For each ingredient inventarize it.
+        */
         function inventorizeIngredient(ingredient) {
             ingredientCount[ingredient] = (ingredientCount[ingredient] || 0) + 1;
         }
