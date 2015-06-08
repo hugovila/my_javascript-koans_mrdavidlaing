@@ -183,6 +183,44 @@ describe("About Applying What We Have Learnt", function () {
 
     /*********************************************************************************/
 
+    it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (Refactor with xav1uzz)", function () {
+
+        var productsICanEat = [];
+
+        function isNoMushrooms(ingredient) {
+            return !(ingredient === "mushrooms");
+        }
+        function forEachIngredientCheck(product, operation) {
+            var passed = true, j,
+                ingredients = product.ingredients;
+            for (j = 0; j < ingredients.length; j += 1) {
+                passed = passed && operation.call(this, ingredients[j]);
+            }
+            return passed;
+        }
+        function hasNoMushrooms(product) {
+            return forEachIngredientCheck(product, isNoMushrooms);
+        }
+        function hasNoNuts(product) {
+            return !product.containsNuts;
+        }
+        function selectPizzasICanEat(product) {
+            if (hasNoNuts(product) && hasNoMushrooms(product)) {
+                productsICanEat.push(product);
+            }
+        }
+        function forEachProduct(operation) {
+            var i;
+            for (i = 0; i < products.length; i += 1) {
+                operation.call(this, products[i]);
+            }
+        }
+        forEachProduct(selectPizzasICanEat);
+        expect(productsICanEat.length).toBe(1);
+    });
+
+    /*********************************************************************************/
+
     it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (functional) filter() & every() Javascript", function () {
 
         var productsICanEat = [];
