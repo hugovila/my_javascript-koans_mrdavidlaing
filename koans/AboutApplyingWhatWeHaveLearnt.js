@@ -1,5 +1,5 @@
 /*jslint nomen: true */
-/*global _, describe, beforeEach, it, expect*/
+/*global _, describe, beforeEach, it, expect, console*/
 /*jslint nomen: false */
 
 describe("About Applying What We Have Learnt", function () {
@@ -39,7 +39,7 @@ describe("About Applying What We Have Learnt", function () {
         expect(productsICanEat.length).toBe(1);
     });
 
-  /*********************************************************************************/
+    /*********************************************************************************/
 
     it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (imperative refactor)", function () {
 
@@ -142,6 +142,47 @@ describe("About Applying What We Have Learnt", function () {
 
     /*********************************************************************************/
 
+    it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (refactor)", function () {
+        /*
+        Take each product.
+        For each product look for have nuts.
+        And also take ingredients.
+        For each ingredien look for mushrooms.
+        For each product what no contains mushrooms or nuts inventorize it.
+        */
+        var productsICanEat = [];
+
+        function productContainsSomeICantEat(nuts, mushrooms, product) {
+            if (nuts && mushrooms) { productsICanEat.push(product); }
+        }
+        function lookForMushrooms(ingredient) {
+            return !(ingredient === "mushrooms");
+        }
+        function takeEachIngredient(product) {
+            var j, ingredientHate = true;
+            for (j = 0; j < product.ingredients.length; j += 1) {
+                if (ingredientHate) { ingredientHate = lookForMushrooms(product.ingredients[j]); }
+            }
+            return ingredientHate;
+        }
+        function lookForNuts(product) {
+            return (product.containsNuts === false);
+        }
+        function takeEachProduct(products) {
+            var i, nuts, mushrooms;
+            for (i = 0; i < products.length; i += 1) {
+                nuts = lookForNuts(products[i]);
+                mushrooms = takeEachIngredient(products[i]);
+                productContainsSomeICantEat(nuts, mushrooms, products[i]);
+            }
+        }
+        takeEachProduct(products);
+
+        expect(productsICanEat.length).toBe(1);
+    });
+
+    /*********************************************************************************/
+
     it("given I'm allergic to nuts and hate mushrooms, it should find a pizza I can eat (functional) filter() & every() Javascript", function () {
 
         var productsICanEat = [];
@@ -209,6 +250,8 @@ describe("About Applying What We Have Learnt", function () {
 
         expect(sum).toBe(233168);
     });
+
+    /*********************************************************************************/
 
     it("should add all the natural numbers below 1000 that are multiples of 3 or 5 (imperative) refactor", function () {
 
